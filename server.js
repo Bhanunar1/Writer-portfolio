@@ -28,11 +28,11 @@ async function connectToMongoDB() {
         await client.connect();
         db = client.db(DB_NAME);
         console.log('✅ Connected to MongoDB');
-        
+
         // Create indexes
         await db.collection(SUBSCRIBERS_COLLECTION).createIndex({ email: 1 }, { unique: true });
         await db.collection(CONTACTS_COLLECTION).createIndex({ receivedAt: -1 });
-        
+
         return true;
     } catch (error) {
         console.error('❌ MongoDB connection error:', error.message);
@@ -54,24 +54,28 @@ const createTransporter = () => {
     let emailPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '').trim();
     // Remove any non-alphanumeric characters that might have been added
     emailPass = emailPass.replace(/[^a-zA-Z0-9]/g, '');
-    
+
     if (!emailPass) {
         console.warn('⚠️  EMAIL_PASS not set in environment variables');
     }
-    
+
     // Debug: Show password length (but not the actual password)
     console.log(`🔐 Email password length: ${emailPass.length} characters`);
     if (emailPass.length !== 16) {
         console.warn(`⚠️  Warning: Gmail app passwords should be 16 characters. Current length: ${emailPass.length}`);
     }
-    
+
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
         auth: {
             user: emailUser,
             pass: emailPass
         },
-        // Add connection timeout
+        // Force IPv4 to avoid IPv6 connectivity issues which can cause timeouts
+        family: 4,
+        // timeouts
         connectionTimeout: 10000,
         greetingTimeout: 10000,
         socketTimeout: 10000
@@ -93,9 +97,9 @@ app.post('/api/subscribe', async (req, res) => {
         if (db) {
             const existingSubscriber = await db.collection(SUBSCRIBERS_COLLECTION).findOne({ email });
             if (existingSubscriber) {
-                return res.status(200).json({ 
-                    success: true, 
-                    message: 'You are already subscribed!' 
+                return res.status(200).json({
+                    success: true,
+                    message: 'You are already subscribed!'
                 });
             }
 
@@ -150,16 +154,16 @@ app.post('/api/subscribe', async (req, res) => {
             console.warn('⚠️  MongoDB not available, subscription not saved');
         }
 
-        res.json({ 
-            success: true, 
-            message: 'Subscription request received! We will contact you with payment instructions and access details.' 
+        res.json({
+            success: true,
+            message: 'Subscription request received! We will contact you with payment instructions and access details.'
         });
 
     } catch (error) {
         console.error('Subscribe error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Server error. Please try again later.' 
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Please try again later.'
         });
     }
 });
@@ -170,9 +174,9 @@ app.post('/api/contact', async (req, res) => {
         const { name, email, message, type } = req.body;
 
         if (!email || !message) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Email and message are required' 
+            return res.status(400).json({
+                success: false,
+                message: 'Email and message are required'
             });
         }
 
@@ -191,10 +195,10 @@ app.post('/api/contact', async (req, res) => {
             // Send email notification to admin
             try {
                 const transporter = createTransporter();
-                const subject = type === 'feedback' 
+                const subject = type === 'feedback'
                     ? `New Story Feedback from ${name || 'Anonymous'}`
                     : `New Contact Form Message from ${name || 'Anonymous'}`;
-                
+
                 await transporter.sendMail({
                     from: process.env.EMAIL_USER || 'your-email@gmail.com',
                     to: process.env.EMAIL_USER || 'kalkrish153@gmail.com',
@@ -215,16 +219,16 @@ app.post('/api/contact', async (req, res) => {
             console.warn('⚠️  MongoDB not available, contact not saved');
         }
 
-        res.json({ 
-            success: true, 
-            message: 'Message sent successfully! We will get back to you soon.' 
+        res.json({
+            success: true,
+            message: 'Message sent successfully! We will get back to you soon.'
         });
 
     } catch (error) {
         console.error('Contact error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Server error. Please try again later.' 
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Please try again later.'
         });
     }
 });
@@ -237,16 +241,16 @@ app.get('/api/subscribers', async (req, res) => {
                 .find({})
                 .sort({ subscribedAt: -1 })
                 .toArray();
-            
-            res.json({ 
-                success: true, 
-                subscribers: subscribers 
+
+            res.json({
+                success: true,
+                subscribers: subscribers
             });
         } else {
-            res.json({ 
-                success: true, 
+            res.json({
+                success: true,
                 subscribers: [],
-                message: 'MongoDB not connected' 
+                message: 'MongoDB not connected'
             });
         }
     } catch (error) {
@@ -283,5 +287,22 @@ app.listen(PORT, () => {
     if (!process.env.MONGODB_URI) {
         console.warn('⚠️  MONGODB_URI not found. Using fallback connection string.');
         console.warn('   Set MONGODB_URI in environment variables with your actual password.');
+    }
+
+    // Verify email configuration on startup
+    if (process.env.EMAIL_PASS) {
+        try {
+            const transporter = createTransporter();
+            transporter.verify((error, success) => {
+                if (error) {
+                    console.error('❌ Email configuration verification failed:', error.message);
+                    console.error('   Hint: Check if your firewall blocks port 587 or if your IP is whitelisted.');
+                } else {
+                    console.log('✅ Email service is ready and verified');
+                }
+            });
+        } catch (err) {
+            console.error('⚠️  Could not initiate email verification:', err.message);
+        }
     }
 });
