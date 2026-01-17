@@ -66,19 +66,18 @@ const createTransporter = () => {
     }
 
     return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // true for 465, false for other ports
+        service: 'gmail',
         auth: {
             user: emailUser,
             pass: emailPass
         },
-        // Force IPv4 to avoid IPv6 connectivity issues which can cause timeouts
-        family: 4,
-        // timeouts
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000
+        // timeouts (increased to 30s)
+        connectionTimeout: 30000,
+        greetingTimeout: 30000,
+        socketTimeout: 30000,
+        // Enable debug logs
+        logger: true,
+        debug: true
     });
 };
 
@@ -296,7 +295,7 @@ app.listen(PORT, () => {
             transporter.verify((error, success) => {
                 if (error) {
                     console.error('❌ Email configuration verification failed:', error.message);
-                    console.error('   Hint: Check if your firewall blocks port 587 or if your IP is whitelisted.');
+                    console.error('   Hint: Check if your firewall blocks outgoing connections to Gmail or if your IP is restricted.');
                 } else {
                     console.log('✅ Email service is ready and verified');
                 }
