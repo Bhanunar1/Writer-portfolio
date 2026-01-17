@@ -71,13 +71,12 @@ const createTransporter = () => {
             user: emailUser,
             pass: emailPass
         },
+        // Force IPv4 to avoid IPv6 connectivity issues which can cause timeouts
+        family: 4,
         // timeouts (increased to 30s)
         connectionTimeout: 30000,
         greetingTimeout: 30000,
-        socketTimeout: 30000,
-        // Enable debug logs
-        logger: true,
-        debug: true
+        socketTimeout: 30000
     });
 };
 
