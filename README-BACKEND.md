@@ -24,13 +24,29 @@ This backend handles subscription requests, contact form submissions, and email 
    PORT=3000
    ```
 
-   **For Gmail:**
-   - Go to your Google Account settings
-   - Enable 2-Step Verification
-   - Generate an "App Password" for this application
-   - Use that app password as `EMAIL_PASS`
+### 3. Setup Email
+This project uses **Nodemailer** with standard SMTP to send emails. You can use Gmail or any other email provider.
 
-3. **Start the server:**
+#### option A: Using Gmail
+1.  Go to your [Google Account Security](https://myaccount.google.com/security).
+2.  Enable **2-Step Verification** if not already enabled.
+3.  Go to **App Passwords** (search for it in the search bar if you can't find it).
+4.  Create a new App Password (select "Mail" and "Other (Custom name)").
+5.  Copy the 16-character password.
+6.  Update your `.env` file:
+    ```env
+    EMAIL_USER=your-email@gmail.com
+    EMAIL_PASS=your-16-char-app-password
+    ```
+
+#### Option B: Other Providers
+Update your `.env` file with your provider's details. You might need to adjust the `transporter` config in `server.js` if not using Gmail.
+```env
+EMAIL_USER=your-email@example.com
+EMAIL_PASS=your-password
+```
+
+4. **Start the server:**
    ```bash
    npm start
    ```

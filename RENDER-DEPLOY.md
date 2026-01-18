@@ -17,11 +17,20 @@ In your Render dashboard, add these environment variables:
    kalkrish153@gmail.com
    ```
 
-3. **EMAIL_PASS**
+3. **CLIENT_ID**
    ```
-   vhakunjmpsdzosav
+   your_client_id_from_google_cloud
    ```
-   (Your Gmail app password - 16 characters, no spaces)
+
+4. **CLIENT_SECRET**
+   ```
+   your_client_secret_from_google_cloud
+   ```
+
+5. **REFRESH_TOKEN**
+   ```
+   your_refresh_token_from_setup_step
+   ```
 
 4. **PORT**
    ```
@@ -62,7 +71,7 @@ In your Render dashboard, add these environment variables:
 
 - Your site will be available at: `https://your-app-name.onrender.com`
 - MongoDB will automatically store all subscribers and contacts
-- Email functionality will work with your Gmail credentials
+- Email functionality will work using the Gmail API (OAuth2)
 
 ## Important Notes:
 

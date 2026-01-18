@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const nodemailer = require('nodemailer');
-
+// Email Sending Configuration (Standard SMTP)
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -45,39 +45,32 @@ async function connectToMongoDB() {
 // Initialize MongoDB connection
 connectToMongoDB();
 
-// Email transporter configuration
-// Update these with your actual email credentials
-const createTransporter = () => {
-    // Remove spaces from password (Gmail app passwords are 16 chars without spaces)
-    const emailUser = (process.env.EMAIL_USER || 'kalkrish153@gmail.com').trim();
-    // Remove all whitespace (spaces, tabs, newlines) and trim
-    let emailPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '').trim();
-    // Remove any non-alphanumeric characters that might have been added
-    emailPass = emailPass.replace(/[^a-zA-Z0-9]/g, '');
-
-    if (!emailPass) {
-        console.warn('⚠️  EMAIL_PASS not set in environment variables');
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Built-in service for Gmail, or use host/port for others
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
+});
 
-    // Debug: Show password length (but not the actual password)
-    console.log(`🔐 Email password length: ${emailPass.length} characters`);
-    if (emailPass.length !== 16) {
-        console.warn(`⚠️  Warning: Gmail app passwords should be 16 characters. Current length: ${emailPass.length}`);
+// Helper function to send email
+const sendEmail = async ({ to, subject, html }) => {
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: to,
+            subject: subject,
+            html: html
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`✅ Email sent to ${to}: ${info.messageId}`);
+        return info;
+
+    } catch (error) {
+        console.error('❌ Failed to send email:', error.message);
+        throw error;
     }
-
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: emailUser,
-            pass: emailPass
-        },
-        // Force IPv4 to avoid IPv6 connectivity issues which can cause timeouts
-        family: 4,
-        // timeouts (increased to 30s)
-        connectionTimeout: 30000,
-        greetingTimeout: 30000,
-        socketTimeout: 30000
-    });
 };
 
 // API Routes
@@ -112,9 +105,7 @@ app.post('/api/subscribe', async (req, res) => {
 
             // Send confirmation email to subscriber
             try {
-                const transporter = createTransporter();
-                await transporter.sendMail({
-                    from: process.env.EMAIL_USER || 'your-email@gmail.com',
+                await sendEmail({
                     to: email,
                     subject: 'Subscription Request Received - Kal Krish',
                     html: `
@@ -132,9 +123,7 @@ app.post('/api/subscribe', async (req, res) => {
 
             // Notify admin (you)
             try {
-                const transporter = createTransporter();
-                await transporter.sendMail({
-                    from: process.env.EMAIL_USER || 'your-email@gmail.com',
+                await sendEmail({
                     to: process.env.EMAIL_USER || 'kalkrish153@gmail.com',
                     subject: 'New Subscription Request',
                     html: `
@@ -192,13 +181,11 @@ app.post('/api/contact', async (req, res) => {
 
             // Send email notification to admin
             try {
-                const transporter = createTransporter();
                 const subject = type === 'feedback'
                     ? `New Story Feedback from ${name || 'Anonymous'}`
                     : `New Contact Form Message from ${name || 'Anonymous'}`;
 
-                await transporter.sendMail({
-                    from: process.env.EMAIL_USER || 'your-email@gmail.com',
+                await sendEmail({
                     to: process.env.EMAIL_USER || 'kalkrish153@gmail.com',
                     subject: subject,
                     html: `
@@ -272,35 +259,18 @@ process.on('SIGINT', async () => {
 });
 
 // Start server
+// Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     const emailUser = process.env.EMAIL_USER || 'not set';
-    const emailPass = process.env.EMAIL_PASS ? '***set***' : 'not set';
     const mongoUri = process.env.MONGODB_URI ? '***set***' : 'not set';
-    console.log(`📧 Email config: USER=${emailUser}, PASS=${emailPass}`);
-    console.log(`🗄️  MongoDB: ${mongoUri}`);
-    if (!process.env.EMAIL_PASS) {
-        console.warn('⚠️  EMAIL_PASS not found in .env file. Email functionality will not work.');
-    }
-    if (!process.env.MONGODB_URI) {
-        console.warn('⚠️  MONGODB_URI not found. Using fallback connection string.');
-        console.warn('   Set MONGODB_URI in environment variables with your actual password.');
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.warn('⚠️  Email credentials (EMAIL_USER, EMAIL_PASS) missing in .env');
+    } else {
+        console.log('✅ Email service configured');
     }
 
-    // Verify email configuration on startup
-    if (process.env.EMAIL_PASS) {
-        try {
-            const transporter = createTransporter();
-            transporter.verify((error, success) => {
-                if (error) {
-                    console.error('❌ Email configuration verification failed:', error.message);
-                    console.error('   Hint: Check if your firewall blocks outgoing connections to Gmail or if your IP is restricted.');
-                } else {
-                    console.log('✅ Email service is ready and verified');
-                }
-            });
-        } catch (err) {
-            console.error('⚠️  Could not initiate email verification:', err.message);
-        }
+    if (!process.env.MONGODB_URI) {
+        console.warn('⚠️  MONGODB_URI not found. Using fallback connection string.');
     }
 });
