@@ -167,7 +167,9 @@ app.post('/api/contact', async (req, res) => {
             });
         }
 
-        // Add contact/feedback message to MongoDB
+        let contactSaved = false;
+
+        // 1. SAVE TO MONGODB (This is fast and reliable)
         if (db) {
             const contact = {
                 name: name || 'Anonymous',
@@ -178,43 +180,56 @@ app.post('/api/contact', async (req, res) => {
             };
 
             await db.collection(CONTACTS_COLLECTION).insertOne(contact);
-
-            // Send email notification to admin
-            try {
-                const subject = type === 'feedback'
-                    ? `New Story Feedback from ${name || 'Anonymous'}`
-                    : `New Contact Form Message from ${name || 'Anonymous'}`;
-
-                await sendEmail({
-                    to: process.env.EMAIL_USER || 'kalkrish153@gmail.com',
-                    subject: subject,
-                    html: `
-                        <h2>${type === 'feedback' ? 'New Story Feedback' : 'New Contact Form Message'}</h2>
-                        <p><strong>Name:</strong> ${(name || 'Anonymous').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-                        <p><strong>Email:</strong> ${email.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-                        <p><strong>Message:</strong></p>
-                        <p>${message.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>
-                        <p><strong>Received:</strong> ${contact.receivedAt.toISOString()}</p>
-                    `
-                });
-            } catch (emailError) {
-                console.error('Email sending failed:', emailError);
-            }
+            contactSaved = true;
         } else {
             console.warn('⚠️  MongoDB not available, contact not saved');
         }
 
+        // 2. RESPOND TO USER IMMEDIATELY
+        // The user sees "Success" right now!
         res.json({
             success: true,
             message: 'Message sent successfully! We will get back to you soon.'
         });
 
+        // 3. ATTEMPT EMAIL IN THE BACKGROUND
+        // Notice: No 'await' before this, or handled in a separate async block
+        if (contactSaved) {
+            console.log("Attempting background email send...");
+
+            const subject = type === 'feedback'
+                ? `New Story Feedback from ${name || 'Anonymous'}`
+                : `New Contact Form Message from ${name || 'Anonymous'}`;
+
+            sendEmail({
+                to: process.env.EMAIL_USER || 'kalkrish153@gmail.com',
+                subject: subject,
+                html: `
+                    <h2>${type === 'feedback' ? 'New Story Feedback' : 'New Contact Form Message'}</h2>
+                    <p><strong>Name:</strong> ${(name || 'Anonymous').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+                    <p><strong>Email:</strong> ${email.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+                    <p><strong>Message:</strong></p>
+                    <p>${message.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</p>
+                    <p><strong>Received:</strong> ${new Date().toISOString()}</p>
+                `
+            }).then(() => {
+                console.log("✅ Background email sent successfully");
+            }).catch((err) => {
+                console.error("❌ Background email failed (as expected on Render if blocked):", err.message);
+                // Don't worry, the data is already safe in MongoDB!
+            });
+        }
+
     } catch (error) {
         console.error('Contact error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error. Please try again later.'
-        });
+        // Only modify response if we haven't sent it yet. 
+        // In this specific flow, error would likely happen at DB save, which is before res.json
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                message: 'Server error. Please try again later.'
+            });
+        }
     }
 });
 
