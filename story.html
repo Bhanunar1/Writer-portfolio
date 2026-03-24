@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Experience | Kal Krish</title>
+    <link rel="icon" type="image/svg+xml" href="assests/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Story-specific overrides and additions */
+        body {
+            overflow-x: hidden;
+            background: #050505;
+        }
+        
+        .story-header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .story-header-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.15) blur(4px);
+            transform: scale(1.1);
+            transition: transform 10s ease-out;
+            z-index: -1;
+        }
+
+        .story-header.active .story-header-bg {
+            transform: scale(1);
+        }
+
+        .story-title-wrap {
+            z-index: 10;
+        }
+
+        .story-title-reveal {
+            font-family: var(--ff-display);
+            font-size: clamp(3rem, 10vw, 8rem);
+            color: var(--accent);
+            text-shadow: 0 0 50px var(--accent-glow);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.5s var(--ease-out);
+        }
+
+        .story-header.active .story-title-reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .story-genre {
+            font-size: 0.8rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            opacity: 0;
+            transition: opacity 1s 0.5s ease;
+        }
+
+        .story-header.active .story-genre {
+            opacity: 1;
+        }
+
+        /* Scene Layout */
+        .scene {
+            min-height: 100vh;
+            padding: 100px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: transparent;
+        }
+
+        .scene-content {
+            max-width: 800px;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .scene-text {
+            font-family: var(--ff-serif);
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            line-height: 1.8;
+            color: var(--text-primary);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s var(--ease-out);
+        }
+
+        .scene.revealed .scene-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scene-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 2s ease;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.1);
+        }
+
+        .scene.active .scene-backdrop {
+            opacity: 1;
+        }
+
+        .scene-indicator {
+            position: absolute;
+            left: 40px;
+            height: 100px;
+            width: 1px;
+            background: var(--border);
+        }
+
+        .scene-indicator-fill {
+            height: 0;
+            width: 100%;
+            background: var(--accent);
+            transition: height 0.5s ease;
+        }
+
+        .story-nav-bottom {
+            padding: 100px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        /* Scroll Progress */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 2000;
+            width: 0%;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+    </style>
+</head>
+<body class="theme-default">
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <canvas id="grainCanvas" class="grain-overlay"></canvas>
+
+    <!-- Header Section -->
+    <header id="storyHeader" class="story-header" style="background-image: url('')">
+        <div class="story-header-bg" id="headerBg"></div>
+        <div class="story-title-wrap">
+            <p class="story-genre" id="storyGenre">Psychological Thriller</p>
+            <h1 class="story-title-reveal" id="storyTitle">Shadow</h1>
+        </div>
+    </header>
+
+    <!-- Deep Synopsis Container -->
+    <main id="storyContainer" class="container">
+        <div class="synopsis-layout">
+            <div class="synopsis-col">
+                <div class="metadata-pulse">
+                    <span class="m-bit">SCENE: 001</span>
+                    <span class="m-divider"></span>
+                    <span class="m-bit">DRAFT: FINAL</span>
+                    <span class="m-divider"></span>
+                    <span class="m-bit" id="wordCount">WORDS: 1,240</span>
+                </div>
+                
+                <div class="synopsis-body" id="synopsisBody">
+                    <!-- Paragraph 1 -->
+                    <p class="s-para" data-reveal="up">
+                        In the neon-choked sprawl of New Earth, the rain doesn't just fall—it whispers the secrets of a dying timeline. <strong>Shadow</strong> is not just a story of a killer and a cop; it is a psychological descent into the architecture of the soul. Ugender Gansu, a boy whose very existence feels like a glitch in reality, carries a secret so heavy it threatens to tear the fabric of his world. Every time his shadow moves a fraction of a second late, he is reminded that his true self belongs elsewhere. The story explores the terrifying possibility that our shadows are not mere reflections, but tethered entities from a parallel existence, waiting for the one moment of weakness to switch places and claim the daylight.
+                    </p>
+
+                    <!-- Paragraph 2 -->
+                    <p class="s-para" data-reveal="up" style="--delay: 0.2s">
+                        Detective Markon, a man haunted by cycles of grief he cannot name, finds himself tracking a series of murders that defy physics. The victims are found in locked rooms, with no entry points, but their hearts have literally turned to lead. As he follows the trail of cryptic codes etched into the chrome surfaces of the city, he realizes he isn't just looking for a man—he is looking for an anomaly. The narrative moves with the tension of a ticking clock, where the city itself becomes a character—vast, cold, and indifferent to the internal collapses of those who live within its walls. It is a world where technology has outpaced morality, and the only thing left of value is the one thing nobody can see: the truth behind the mask.
+                    </p>
+
+                    <!-- Paragraph 3 -->
+                    <p class="s-para" data-reveal="up" style="--delay: 0.4s">
+                        As the two paths collide, the line between predator and prey dissolves into a terrifying kaleidoscope of moral ambiguity. Ugender’s trauma is revealed not just through flashbacks, but through the literal warping of the environment around him. The "shadow-sickness" begins to spread, turning neighbors into strangers and memories into nightmares. Readers are forced to confront the same question that plagues Detective Markon: If you could erase the darkest part of yourself, but at the cost of your humanity, would you pull the trigger? The suspense isn't built on jump-scares, but on the creeping realization that the killer isn't hiding in the dark—he <em>is</em> the dark.
+                    </p>
+
+                    <!-- Paragraph 4 -->
+                    <p class="s-para" data-reveal="up" style="--delay: 0.6s">
+                        The climax is a cinematic explosion of visual and emotional stakes, set against the backdrop of an solar eclipse that plunges New Earth into a permanent twilight. In this world of gray, the truth finally emerges—a truth about Ugender’s past and Markon’s future that reconciles the parallel worlds in a way no one expected. <strong>Shadow</strong> concludes as a meditation on the cost of redemption and the inescapable nature of our own history. It is a story designed to linger, like a cold draft in a warm room, making every reader look at their own reflection and wonder just how many versions of themselves are out there, waiting in the silence.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="story-nav-bottom">
+        <div class="container">
+            <h2 class="section-heading">End of Scene</h2>
+            <br><br>
+            <a href="index.html" class="btn-back">
+                <span aria-hidden="true">←</span> Back to Reality
+            </a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Story-specific logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.getElementById('storyHeader');
+            const sections = document.querySelectorAll('.scene');
+            const progressBar = document.getElementById('progressBar');
+            
+            // Activate header reveal
+            setTimeout(() => {
+                header.classList.add('active');
+            }, 500);
+
+            // Scroll Handling
+            window.addEventListener('scroll', () => {
+                // Progress Bar
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                progressBar.style.width = scrolled + "%";
+
+                // Scene Activation
+                sections.forEach(sec => {
+                    const rect = sec.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3) {
+                        sec.classList.add('active');
+                        sec.classList.add('revealed');
+                    } else {
+                        sec.classList.remove('active');
+                    }
+                });
+            });
+
+            // Handle Dynamic Content if URL params exist
+            const params = new URLSearchParams(window.location.search);
+            const storyId = params.get('id');
+            
+            if (storyId) {
+                const titleEl = document.getElementById('storyTitle');
+                const genreEl = document.getElementById('storyGenre');
+                const bgEl    = document.getElementById('headerBg');
+                const body    = document.getElementById('synopsisBody');
+
+                if (storyId === 'room217') {
+                    titleEl.textContent = 'Room No. 217';
+                    genreEl.textContent = 'Supernatural Horror';
+                    bgEl.style.backgroundImage = "url('assests/horror.jpg')";
+                    
+                    body.innerHTML = `
+                        <p class="s-para" data-reveal="up">
+                            At the edge of the campus sits a derelict hostel wing, a architectural scar that everyone ignores but no one forgets. <strong>Room No. 217</strong> is not just a room; it’s a throat—one that swallows students whole and spits back only fragments of their sanity. Three students, desperate for a quiet place to study, uncover the keys to this forgotten chamber. They walk in expecting cobwebs and quiet, but they find a space where gravity feels local and the air smells like electricity and old grease. The story delves into the history of the one student who checked in fifty years ago and never technically checked out, leaving behind a presence that feeds on the guilt of anyone who enters.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            As the first night falls, the walls begin to sweat a viscous, black fluid that spells out the names of the occupants' deepest fears. The narrative quickly shifts from a ghost story to a psychological survival game. Each of the three students has a secret—a lie they’ve told to their parents, a friend they’ve betrayed, a truth they’ve buried. The room doesn’t just haunt them; it mirrors them. It projects their insecurities onto the ceiling until they are forced to confront the physical manifestations of their own internal rot. It is a terrifying exploration of how our institutions bury their scandals, only for those scandals to grow into something monstrous in the dark.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            The horror is claustrophobic and relentless, with the room itself shrinking and expanding like a beating heart. The students realize that the door is no longer a way out, but a seal. To escape, they must solve the mystery of what happened in 1974, but every clue they find requires them to sacrifice a piece of their sanity. The visual descriptions are visceral—shadows that detach from their owners and mirror-reflections that start living independent lives. <strong>Room No. 217</strong> is a masterclass in atmosphere, where the silence is as loud as a scream and the darkness is thick enough to feel.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            By the time the final sunrise attempts to break through the boarded-up windows, only one survivor remains, and even they aren't the same person who walked in. The conclusion is a haunting meditation on the cyclical nature of trauma and the price of knowing what lies behind the curtain. It is a story that makes every student look twice at their dorm room walls and wonder if the scratching sound they hear is just the wind, or a predecessor waiting to be heard. <strong>Room No. 217</strong> leaves the reader with a chilling realization: some rooms don't want to be opened, they want to be filled.
+                        </p>
+                    `;
+                } else if (storyId === 'betting') {
+                    titleEl.textContent = 'Betting Baddhithudu';
+                    genreEl.textContent = 'Emotional Drama';
+                    bgEl.style.backgroundImage = "url('assests/drama.jpg')";
+
+                    body.innerHTML = `
+                        <p class="s-para" data-reveal="up">
+                            In the quiet middle-class neighborhoods of the city, a different kind of war is being fought—one without guns, but with high-stakes digital transactions. <strong>Betting Baddhithudu</strong> (The Victim of Betting) is a visceral exploration of the modern addiction that is tearing families apart. The story follows a man who lives a double life: a responsible father by day, and a desperate gambler by night, chasing the high of a "sure thing" that never arrives. The first paragraph establishes the crushing weight of his reality, where every notification on his phone is a potential lifeline or a death sentence for his family's future.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            The narrative doesn't shy away from the mechanics of the downfall. It describes the slow, methodical erosion of trust as he sells off his wife's jewelry and drains his children's education funds. The "betting" is a character itself—a seductive, whispering phantom that promises a way out while digging a deeper hole. The story captures the psychological manipulation of these platforms, showing how they exploit human hope and the desperate need for a "shortcut" to a better life. It is a cautionary tale that feels painfully relevant in a world where the casino is always in your pocket.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            As the walls close in, the drama shifts from the individual to the collective. We see the impact on his wife, whose resilience is tested to its breaking point, and his children, who learn to recognize the "gambler's look" in their father's eyes. The tension is built not on action, but on the silent dinner tables and the lies that have become the family's primary language. The story explores the concept of "Sunk Cost Fallacy" through a narrative lens, making the reader feel the same frantic pulse of the protagonist as he places one last, "guaranteed" bet to fix everything.
+                        </p>
+                        <p class="s-para" data-reveal="up">
+                            The conclusion is a sobering, unromanticized look at the aftermath of addiction. There are no easy redemptions or lottery wins. Instead, there is the slow, agonizing process of rebuilding from the rubble. <strong>Betting Baddhithudu</strong> ends not with a bang, but with a quiet, powerful moment of accountability. It is a story designed to spark conversation and provide a mirror to those struggling in silence. It serves as a reminder that the greatest bet we ever place is on our own integrity, and the cost of losing that is higher than any monetary debt.
+                        </p>
+                    `;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

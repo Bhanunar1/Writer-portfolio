@@ -3,378 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kal Krish - Writer of Worlds, Weaver of Shadows. Stories born from struggle, grown with imagination, and lived through emotion.">
+    <meta name="description" content="Kal Krish — Writer of Worlds, Weaver of Shadows. A cinematic portfolio of stories born from struggle, grown with imagination, and lived through emotion.">
+    <meta name="author" content="Kal Krish">
     <title>Kal Krish — Writer of Worlds, Weaver of Shadows</title>
     <link rel="icon" type="image/svg+xml" href="assests/favicon.svg">
-    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="theme-default" data-scroll="0">
+
+    <!-- Living Background (Breathing Vignette) -->
+    <div class="living-bg" aria-hidden="true"></div>
+
+    <!-- Production Metadata Layer -->
+    <div class="studio-meta meta-tl" id="realTime">03/24/2026 12:00:00</div>
+    <div class="studio-meta meta-tr">DRFT_ID: KK_PRTF_V3.0</div>
+    <div class="studio-meta meta-bl">LAT: 17.3850° N / LON: 78.4867° E</div>
+    <div class="studio-meta meta-br">STATUS: ANALYZING_IDENTITY...</div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+    <!-- Film Grain Overlay -->
+    <canvas id="grainCanvas" class="grain-overlay" aria-hidden="true"></canvas>
+
+    <!-- Loading Screen (Studio Intro) -->
+    <div class="loading-screen" id="loadingScreen" aria-hidden="true">
+        <div class="loading-logo">
+            <span class="loading-k">K</span>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
-            <div class="logo">
-                <span class="logo-k">K</span>
-                <span class="logo-text">Kal Krish</span>
-            </div>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#books" class="nav-link">Books</a></li>
-                <li><a href="#writing-style" class="nav-link">Writing Style</a></li>
-                <li><a href="#themes" class="nav-link">Themes</a></li>
-                <li><a href="#journey" class="nav-link">Journey</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+            <a href="#home" class="logo" aria-label="Kal Krish Home">
+                <span class="logo-k" aria-hidden="true">K</span>
+                <span class="logo-name">Kal Krish</span>
+            </a>
+            <ul class="nav-menu" id="navMenu" role="list">
+                <li><a href="#home" class="nav-link" data-section="home">Home</a></li>
+                <li><a href="#identity" class="nav-link" data-section="identity">Identity</a></li>
+                <li><a href="#works" class="nav-link" data-section="works">Works</a></li>
+                <li><a href="#mind" class="nav-link" data-section="mind">The Mind</a></li>
+                <li><a href="#read" class="nav-link" data-section="read">Read</a></li>
+                <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
             </ul>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="navMenu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- Ambient FX Layer -->
-    <div class="fx-overlay" aria-hidden="true"></div>
-
-    <!-- Theme Toggle -->
-    <div class="theme-panel" aria-label="Theme switcher">
-        <button class="theme-btn" data-theme="default" title="Default">✨</button>
-        <button class="theme-btn" data-theme="psych" title="Psychological Thriller">🧠</button>
-        <button class="theme-btn" data-theme="horror" title="Horror">💀</button>
-        <button class="theme-btn" data-theme="fantasy" title="Fantasy">🪄</button>
-        <button class="theme-btn" data-theme="drama" title="Emotional Drama">❤️</button>
-        <button class="theme-btn" data-theme="mystery" title="Mystery">🕵️</button>
-        <button class="theme-btn" data-theme="series" title="Fiction Series">∞</button>
+    <!-- Theme Switcher -->
+    <div class="theme-panel" id="themePanel" role="group" aria-label="Theme switcher">
+        <button class="theme-btn active" data-theme="default" title="Default Dark" aria-label="Default theme">✦</button>
+        <button class="theme-btn" data-theme="psych" title="Psychological Thriller" aria-label="Psychological Thriller theme">🧠</button>
+        <button class="theme-btn" data-theme="horror" title="Horror" aria-label="Horror theme">💀</button>
+        <button class="theme-btn" data-theme="fantasy" title="Fantasy" aria-label="Fantasy theme">🪄</button>
+        <button class="theme-btn" data-theme="drama" title="Drama" aria-label="Drama theme">❤️</button>
+        <button class="theme-btn" data-theme="mystery" title="Mystery" aria-label="Mystery theme">🕵️</button>
     </div>
 
-    <!-- Home Section -->
-    <section id="home" class="hero-section">
-        <div class="hero-background"></div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 1: HERO — CINEMATIC ENTRY          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="home" class="hero-section" aria-label="Hero introduction">
+        <div class="hero-bg" aria-hidden="true">
+            <div class="hero-bg-image"></div>
+            <div class="hero-vignette"></div>
+            <div class="hero-particles" id="heroParticles" aria-hidden="true"></div>
+        </div>
+
         <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">Kal Krish</h1>
-                <p class="hero-subtitle">Writer of Worlds, Weaver of Shadows</p>
-                <p class="hero-tagline">"Stories born from struggle, grown with imagination, and lived through emotion."</p>
-            </div>
-            
-            <div class="hero-image-container">
-                <img src="assests/Profile.jpg" alt="Kal Krish author portrait" class="author-photo">
+            <!-- Cinematic top label -->
+            <div class="hero-label reveal-fade" aria-label="Genre">
+                <span class="label-line" aria-hidden="true"></span>
+                <span class="label-text">Writer of Worlds · Weaver of Shadows</span>
+                <span class="label-line" aria-hidden="true"></span>
             </div>
 
-            <div class="scrolling-books">
-                <div class="book-scroll">
-                    <span class="book-title">Shadow</span>
-                    <span class="book-separator">|</span>
-                    <span class="book-title">Room No.217</span>
-                    <span class="book-separator">|</span>
-                    <span class="book-title">Nature-Man</span>
-                    <span class="book-separator">|</span>
-                    <span class="book-title">Betting Baddhithudu</span>
+            <!-- Main title (Kinetic) -->
+            <h1 class="hero-title" id="heroTitle">
+                <span class="title-line"><span>Kal</span></span>
+                <span class="title-line accent-glow"><span>Krish</span></span>
+            </h1>
+
+            <!-- Typewriter tagline -->
+            <p class="hero-tagline" id="heroTagline" aria-live="polite">
+                <span class="typewriter-text" id="typewriterText"></span>
+                <span class="typewriter-cursor" aria-hidden="true">|</span>
+            </p>
+
+            <!-- Scroll indicator -->
+            <div class="scroll-indicator reveal-fade" aria-label="Scroll to continue" role="button" tabindex="0" id="scrollIndicator">
+                <span class="scroll-text">Scroll to begin</span>
+                <div class="scroll-arrow" aria-hidden="true">
+                    <span></span><span></span><span></span>
                 </div>
             </div>
+        </div>
 
-            <div class="hero-intro">
-                <p>I am Kal Krish, an Indian storyteller exploring thriller, mystery, fantasy, horror, and emotional drama — turning raw human experience into powerful narratives.</p>
-            </div>
-
-            <div class="hero-cta">
-                <a href="#books" class="btn btn-primary">Read My Stories</a>
-                <a href="#contact" class="btn btn-secondary">Contact Me</a>
+        <!-- Floating book titles -->
+        <div class="hero-marquee" aria-hidden="true">
+            <div class="marquee-track">
+                <span>Shadow</span><span class="sep">·</span>
+                <span>Room No. 217</span><span class="sep">·</span>
+                <span>Nature-Man</span><span class="sep">·</span>
+                <span>Betting Baddhithudu</span><span class="sep">·</span>
+                <span>One Piece: Pirate Island Arc</span><span class="sep">·</span>
+                <span>Shadow</span><span class="sep">·</span>
+                <span>Room No. 217</span><span class="sep">·</span>
+                <span>Nature-Man</span><span class="sep">·</span>
+                <span>Betting Baddhithudu</span><span class="sep">·</span>
+                <span>One Piece: Pirate Island Arc</span><span class="sep">·</span>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="section about-section">
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 2: IDENTITY — WHO IS KAL KRISH     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="identity" class="section identity-section" aria-label="Identity and philosophy">
+        <div class="section-divider" aria-hidden="true"></div>
         <div class="container">
-            <h2 class="section-title">About</h2>
-            
-            <div class="about-content">
-                <div class="about-short">
-                    <h3>Short Bio</h3>
-                    <p>I'm Kal Krish (real name Narala Bhanu Prakash), a storyteller who treats imagination as a weapon and writing as an escape. I come from a modest background and built my creative world through struggle, silence, and observing human emotions.</p>
-                    <p>I write dark fiction, psychological thrillers, emotional dramas, and fantasy worlds filled with heart and danger.</p>
+
+            <div class="identity-layout">
+                <!-- Left: Portrait -->
+                <div class="identity-visual" data-reveal="left">
+                    <div class="portrait-frame">
+                        <img src="assests/Profile.jpg" alt="Kal Krish — storyteller portrait" class="portrait-img" loading="lazy">
+                        <div class="portrait-glow" aria-hidden="true"></div>
+                        <div class="portrait-corner tl" aria-hidden="true"></div>
+                        <div class="portrait-corner tr" aria-hidden="true"></div>
+                        <div class="portrait-corner bl" aria-hidden="true"></div>
+                        <div class="portrait-corner br" aria-hidden="true"></div>
+                    </div>
+                    <div class="identity-stats" aria-label="Story statistics">
+                        <div class="stat-item">
+                            <span class="stat-num" data-count="5">0</span>
+                            <span class="stat-label">Stories</span>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat-item">
+                            <span class="stat-num" data-count="6">0</span>
+                            <span class="stat-label">Genres</span>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat-item">
+                            <span class="stat-num" data-count="1">0</span>
+                            <span class="stat-label">Vision</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="about-long">
-                    <h3>Long Bio</h3>
-                    <p>Raised without privilege or shortcuts, I found my path in storytelling through observation, curiosity, and introspection. Under the pen name Kal Krish, I create stories that explore the unseen corners of the human mind — fear, guilt, ambition, grief — while also celebrating courage, hope, and transformation.</p>
-                    <p>My writing style is cinematic, emotional, dialogue-rich, and rooted in realism. I switch between genres with ease:</p>
-                    <ul class="bio-list">
-                        <li><strong>Shadow</strong> — a psychological thriller set on a parallel world</li>
-                        <li><strong>Room No 217</strong> — supernatural horror based on a cursed hostel</li>
-                        <li><strong>Nature-Man</strong> — a superhero fantasy with emotional core</li>
-                        <li><strong>Betting Baddhithudu</strong> — a raw, personal drama about family and addiction</li>
-                    </ul>
-                    <p class="bio-closing">My stories reflect the belief that every person has a shadow, every home has a story, and every heart has a battle.</p>
+                <!-- Right: Philosophy -->
+                <div class="identity-text" data-reveal="right">
+                    <div class="section-eyebrow">Identity</div>
+                    <h2 class="section-heading">I don't write stories.<br>I <em>uncover</em> them.</h2>
+
+                    <div class="philosophy-block">
+                        <p class="philosophy-statement highlighted">
+                            Born without privilege. Raised on <span class="redact">silence</span>, observation, and the raw electricity of <span class="redact">unspoken human emotion</span>.
+                        </p>
+                        <p class="philosophy-body">
+                            Under the pen name <strong>Kal Krish</strong>, I create worlds where fear has texture, hope has weight, and every <span class="redact">shadow tells a truth</span> that daylight refuses to.
+                        </p>
+                        <p class="philosophy-body">
+                            My stories are not escapism. They are <span class="redact">excavation</span> — of the self, of society, of the unseen battles fought in ordinary rooms at 3 AM.
+                        </p>
+                    </div>
+
+                    <div class="identity-pillars" role="list">
+                        <div class="pillar" role="listitem">
+                            <span class="pillar-icon" aria-hidden="true">◈</span>
+                            <div>
+                                <h3 class="pillar-title">Cinematic Vision</h3>
+                                <p class="pillar-desc">Every scene is framed like a shot. Every dialogue lands like a cut.</p>
+                            </div>
+                        </div>
+                        <div class="pillar" role="listitem">
+                            <span class="pillar-icon" aria-hidden="true">◈</span>
+                            <div>
+                                <h3 class="pillar-title">Emotional Precision</h3>
+                                <p class="pillar-desc">The characters don't just act. They ache, doubt, and transform.</p>
+                            </div>
+                        </div>
+                        <div class="pillar" role="listitem">
+                            <span class="pillar-icon" aria-hidden="true">◈</span>
+                            <div>
+                                <h3 class="pillar-title">Genre Fluidity</h3>
+                                <p class="pillar-desc">From supernatural horror to emotional drama — each genre is a different lens, same soul.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Books Section -->
-    <section id="books" class="section books-section">
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 3: WORKS — CINEMATIC PANELS        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="works" class="section works-section" aria-label="Featured works">
         <div class="container">
-            <h2 class="section-title">Featured Works</h2>
-            
-            <div class="books-grid">
+            <div class="section-header" data-reveal="up">
+                <div class="section-eyebrow">Featured Works</div>
+                <h2 class="section-heading centered">Every story is a world.<br>Step inside.</h2>
+            </div>
+
+            <div class="works-grid" role="list">
+
                 <!-- Shadow -->
-                <div class="book-card">
-                    <div class="book-icon">🔥</div>
-                    <h3 class="book-name">SHADOW (Volume 1)</h3>
-                    <p class="book-genre">Psychological Thriller / Dark Fiction</p>
-                    <p class="book-description">A boy named Ugender Gansu hides a terrifying truth while a brutal serial killer leaves cryptic codes across a futuristic city on another Earth-like world. As Detective Markon digs deeper, the line between killer, victim, and destiny begins to collapse.</p>
-                    <div class="book-themes">
-                        <span class="theme-tag">Identity</span>
-                        <span class="theme-tag">Trauma</span>
-                        <span class="theme-tag">Supernatural Shadows</span>
-                        <span class="theme-tag">Moral ambiguity</span>
-                        <span class="theme-tag">Fear of truth</span>
+                <a href="story.html?id=shadow" class="work-panel" data-genre="thriller" role="listitem" data-reveal="up" style="--delay: 0s">
+                    <div class="work-panel-bg" aria-hidden="true" style="background-image: url('assests/psychology.jpg')"></div>
+                    <div class="work-panel-overlay" aria-hidden="true"></div>
+                    <div class="work-panel-content">
+                        <div class="work-genre-tag">Psychological Thriller</div>
+                        <h3 class="work-title">Shadow</h3>
+                        <p class="work-synopsis">A boy hides a terrifying truth. A detective closes in. On a parallel Earth, codes etched in blood rewrite the rules of identity.</p>
+                        <div class="work-themes" role="list" aria-label="Themes">
+                            <span role="listitem">Identity</span>
+                            <span role="listitem">Trauma</span>
+                            <span role="listitem">Moral Ambiguity</span>
+                        </div>
+                        <div class="work-cta">
+                            <span class="work-read-link">Explore Story <span aria-hidden="true">→</span></span>
+                        </div>
                     </div>
-                </div>
+                    <div class="work-number" aria-hidden="true">01</div>
+                </a>
 
-                <!-- Room No. 217 -->
-                <div class="book-card">
-                    <div class="book-icon">👻</div>
-                    <h3 class="book-name">ROOM NO. 217</h3>
-                    <p class="book-genre">Supernatural Horror</p>
-                    <p class="book-description">A junior college hostel holds a cursed room where a student once died. Three new roommates begin experiencing visions, nightmares, and paranormal attacks — and slowly uncover a truth buried by the management for years.</p>
-                    <div class="book-themes">
-                        <span class="theme-tag">Fear vs reality</span>
-                        <span class="theme-tag">Guilt</span>
-                        <span class="theme-tag">Friendship</span>
-                        <span class="theme-tag">Spirited hauntings</span>
-                        <span class="theme-tag">Trauma of youth</span>
+                <!-- Room 217 -->
+                <a href="story.html?id=room217" class="work-panel" data-genre="horror" role="listitem" data-reveal="up" style="--delay: 0.1s">
+                    <div class="work-panel-bg" aria-hidden="true" style="background-image: url('assests/horror.jpg')"></div>
+                    <div class="work-panel-overlay" aria-hidden="true"></div>
+                    <div class="work-panel-content">
+                        <div class="work-genre-tag">Supernatural Horror</div>
+                        <h3 class="work-title">Room No. 217</h3>
+                        <p class="work-synopsis">A cursed hostel room. Three students. Visions begin. Nightmares follow. And then — the truth the institution buried for years begins to surface.</p>
+                        <div class="work-themes" role="list" aria-label="Themes">
+                            <span role="listitem">Fear</span>
+                            <span role="listitem">Guilt</span>
+                            <span role="listitem">Buried Truth</span>
+                        </div>
+                        <div class="work-cta">
+                            <span class="work-read-link">Explore Story <span aria-hidden="true">→</span></span>
+                        </div>
                     </div>
-                </div>
+                    <div class="work-number" aria-hidden="true">02</div>
+                </a>
 
                 <!-- Nature-Man -->
-                <div class="book-card">
-                    <div class="book-icon">🌿</div>
-                    <h3 class="book-name">NATURE-MAN</h3>
-                    <p class="book-genre">Superhero Fantasy</p>
-                    <p class="book-description">A boy accidentally drinks a genetic serum created by his scientist parents — giving him the powers to communicate with nature and fight a ruthless villain destroying forests.</p>
-                    <div class="book-themes">
-                        <span class="theme-tag">Protecting nature</span>
-                        <span class="theme-tag">Responsibility</span>
-                        <span class="theme-tag">Power vs greed</span>
-                        <span class="theme-tag">Emotional transformation</span>
+                <article class="work-panel" data-genre="fantasy" role="listitem" data-reveal="up" style="--delay: 0.2s">
+                    <div class="work-panel-bg" aria-hidden="true" style="background-image: url('assests/fantasy.jpg')"></div>
+                    <div class="work-panel-overlay" aria-hidden="true"></div>
+                    <div class="work-panel-content">
+                        <div class="work-genre-tag">Superhero Fantasy</div>
+                        <h3 class="work-title">Nature-Man</h3>
+                        <p class="work-synopsis">A serum. A boy. The voices of nature itself. An ordinary child becomes the last guardian of a world too greedy to listen.</p>
+                        <div class="work-themes" role="list" aria-label="Themes">
+                            <span role="listitem">Power</span>
+                            <span role="listitem">Responsibility</span>
+                            <span role="listitem">Transformation</span>
+                        </div>
+                        <div class="work-cta">
+                            <a class="work-read-link" href="http://wbnv.in/a/28jXqYL" target="_blank" rel="noopener noreferrer">Read on WebNovel <span aria-hidden="true">→</span></a>
+                        </div>
                     </div>
-                </div>
+                    <div class="work-number" aria-hidden="true">03</div>
+                </article>
 
                 <!-- Betting Baddhithudu -->
-                <div class="book-card">
-                    <div class="book-icon">🎭</div>
-                    <h3 class="book-name">BETTING BADDHITHUDU</h3>
-                    <p class="book-genre">Emotional Drama</p>
-                    <p class="book-description">A young jobless man slowly falls into the world of online betting, influenced by relatives, friends, and his own insecurities. But his addiction begins to tear apart his family, dreams, and self-worth.</p>
-                    <div class="book-themes">
-                        <span class="theme-tag">Family bonds</span>
-                        <span class="theme-tag">Addiction</span>
-                        <span class="theme-tag">Consequences</span>
-                        <span class="theme-tag">Redemption</span>
-                        <span class="theme-tag">Realistic struggle</span>
+                <a href="story.html?id=betting" class="work-panel" data-genre="drama" role="listitem" data-reveal="up" style="--delay: 0.3s">
+                    <div class="work-panel-bg" aria-hidden="true" style="background-image: url('assests/drama.jpg')"></div>
+                    <div class="work-panel-overlay" aria-hidden="true"></div>
+                    <div class="work-panel-content">
+                        <div class="work-genre-tag">Emotional Drama</div>
+                        <h3 class="work-title">Betting Baddhithudu</h3>
+                        <p class="work-synopsis">A man. A habit. A family slowly breaking. This is not a story about betting — it's about what we destroy when we stop believing in ourselves.</p>
+                        <div class="work-themes" role="list" aria-label="Themes">
+                            <span role="listitem">Addiction</span>
+                            <span role="listitem">Family</span>
+                            <span role="listitem">Redemption</span>
+                        </div>
+                        <div class="work-cta">
+                            <span class="work-read-link">Explore Story <span aria-hidden="true">→</span></span>
+                        </div>
                     </div>
-                </div>
+                    <div class="work-number" aria-hidden="true">04</div>
+                </a>
 
-                <!-- One Piece: Pirate Island Arc -->
-                <div class="book-card">
-                    <div class="book-icon">🏴‍☠️</div>
-                    <h3 class="book-name">ONE PIECE: PIRATE ISLAND ARC</h3>
-                    <p class="book-genre">Fan Fiction / Adventure</p>
-                    <p class="book-description">In one world, Monkey D. Luffy sails forward—from Egghead to Elbaph—laughing as the future calls. In another… he stops. A parallel sea reveals a nightmare: Monkey D. Garp, Hero of the Marines, captured by Blackbeard and sentenced to execution on Pirate Island. Defying fate itself, Luffy turns his ship toward the most dangerous island in the world—where emperors rule, legends fall, and mercy does not exist.</p>
-                    <div class="book-themes">
-                        <span class="theme-tag">Family bonds</span>
-                        <span class="theme-tag">Defying fate</span>
-                        <span class="theme-tag">Rescue mission</span>
-                        <span class="theme-tag">Pirate king's resolve</span>
-                        <span class="theme-tag">Parallel timeline</span>
+                <!-- One Piece Fan Fiction — wide panel -->
+                <article class="work-panel wide-panel" data-genre="fanfic" role="listitem" data-reveal="up" style="--delay: 0.4s">
+                    <div class="work-panel-bg" aria-hidden="true" style="background-image: url('assests/mystery.jpg')"></div>
+                    <div class="work-panel-overlay" aria-hidden="true"></div>
+                    <div class="work-panel-content">
+                        <div class="work-genre-tag">Fan Fiction · Adventure · <span class="festival-badge">🎉 Fanfic Festa</span></div>
+                        <h3 class="work-title">One Piece: Pirate Island Arc</h3>
+                        <p class="work-synopsis">In one world, Luffy laughs and sails forward. In another — he stops. Garp is chained. The drums of war begin. When family is in chains, how far will a pirate king go?</p>
+                        <div class="work-themes" role="list" aria-label="Themes">
+                            <span role="listitem">Family</span>
+                            <span role="listitem">Defying Fate</span>
+                            <span role="listitem">War</span>
+                            <span role="listitem">Parallel Timeline</span>
+                        </div>
+                        <div class="work-cta">
+                            <a class="work-read-link btn-glow" href="http://wbnv.in/a/0djYVG4" target="_blank" rel="noopener noreferrer">Read on WebNovel <span aria-hidden="true">→</span></a>
+                        </div>
                     </div>
-                    <div style="margin-top: 20px;">
-                        <a href="http://wbnv.in/a/0djYVG4" target="_blank" class="webnovel-link" style="display: inline-block;">Read on WebNovel →</a>
-                        <span class="festival-note" style="margin-left: 15px;">🎉 Fanfic Festa</span>
-                    </div>
-                </div>
+                    <div class="work-number" aria-hidden="true">05</div>
+                </article>
+
             </div>
         </div>
     </section>
 
-    <!-- Writing Style Section -->
-    <section id="writing-style" class="section writing-style-section">
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 4: THE MIND — PHILOSOPHY + STYLE   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="mind" class="section mind-section" aria-label="Writing philosophy and mind">
+        <div class="mind-bg-text" aria-hidden="true">MIND</div>
         <div class="container">
-            <h2 class="section-title">Writing Style</h2>
-            
-            <div class="style-content">
-                <div class="signature-style">
-                    <h3>My Signature Style</h3>
-                    <div class="style-grid">
-                        <div class="style-item">Cinematic storytelling</div>
-                        <div class="style-item">Strong dialogues</div>
-                        <div class="style-item">Emotional depth</div>
-                        <div class="style-item">Suspense-building</div>
-                        <div class="style-item">Realistic characters</div>
-                        <div class="style-item">Smooth scene transitions</div>
-                        <div class="style-item">Anime-inspired visual imagination</div>
-                        <div class="style-item">Dark and dramatic tones</div>
-                    </div>
+
+            <!-- Central quote -->
+            <div class="mind-quote-block" data-reveal="up">
+                <blockquote class="mind-quote">
+                    <p>"Stories are born from silence.<br>They grow in the dark.<br>And only reach light when someone is <em>brave enough</em> to speak them."</p>
+                    <footer class="mind-quote-author">— Kal Krish</footer>
+                </blockquote>
+            </div>
+
+            <!-- Style grid -->
+            <div class="mind-grid">
+                <div class="mind-column" data-reveal="left">
+                    <h3 class="mind-col-title">Writing Style</h3>
+                    <ul class="mind-list" role="list">
+                        <li class="mind-item" role="listitem">
+                            <span class="mind-icon" aria-hidden="true">◉</span>
+                            <div>
+                                <strong>Cinematic Storytelling</strong>
+                                <p>Scenes unfold like frames of film — choreographed, deliberate, immersive.</p>
+                            </div>
+                        </li>
+                        <li class="mind-item" role="listitem">
+                            <span class="mind-icon" aria-hidden="true">◉</span>
+                            <div>
+                                <strong>Dialogue-Driven Tension</strong>
+                                <p>Characters reveal themselves not through exposition — but through what they almost say.</p>
+                            </div>
+                        </li>
+                        <li class="mind-item" role="listitem">
+                            <span class="mind-icon" aria-hidden="true">◉</span>
+                            <div>
+                                <strong>Emotional Depth</strong>
+                                <p>Beneath every plot is an emotional truth that readers carry with them long after the last page.</p>
+                            </div>
+                        </li>
+                        <li class="mind-item" role="listitem">
+                            <span class="mind-icon" aria-hidden="true">◉</span>
+                            <div>
+                                <strong>Anime-Inspired Imagination</strong>
+                                <p>Visual, kinetic, bold — story arcs built for maximum emotional impact.</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
 
-                <div class="genres">
-                    <h3>Genres I Write</h3>
-                    <div class="genre-list">
-                        <span class="genre-tag">Psychological Thriller</span>
-                        <span class="genre-tag">Horror</span>
-                        <span class="genre-tag">Fantasy</span>
-                        <span class="genre-tag">Emotional Drama</span>
-                        <span class="genre-tag">Mystery</span>
-                        <span class="genre-tag">Fiction Series</span>
+                <div class="mind-column" data-reveal="right">
+                    <h3 class="mind-col-title">Themes I Explore</h3>
+                    <div class="theme-orbit" role="list" aria-label="Core themes">
+                        <div class="orbit-item" role="listitem" style="--i:0">Human Psychology</div>
+                        <div class="orbit-item" role="listitem" style="--i:1">Family Bonds</div>
+                        <div class="orbit-item" role="listitem" style="--i:2">Shadows & Fear</div>
+                        <div class="orbit-item" role="listitem" style="--i:3">Good vs Evil</div>
+                        <div class="orbit-item" role="listitem" style="--i:4">Supernatural</div>
+                        <div class="orbit-item" role="listitem" style="--i:5">Redemption</div>
+                        <div class="orbit-item" role="listitem" style="--i:6">The Ordinary Hero</div>
+                        <div class="orbit-item" role="listitem" style="--i:7">Struggle & Loss</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Genres strip -->
+            <div class="genre-strip" data-reveal="up">
+                <button class="genre-pill active" data-filter="all" aria-pressed="true">All Genres</button>
+                <button class="genre-pill" data-filter="thriller" aria-pressed="false">Psychological Thriller</button>
+                <button class="genre-pill" data-filter="horror" aria-pressed="false">Horror</button>
+                <button class="genre-pill" data-filter="fantasy" aria-pressed="false">Fantasy</button>
+                <button class="genre-pill" data-filter="drama" aria-pressed="false">Emotional Drama</button>
+                <button class="genre-pill" data-filter="mystery" aria-pressed="false">Mystery</button>
+                <button class="genre-pill" data-filter="fanfic" aria-pressed="false">Fan Fiction</button>
             </div>
         </div>
     </section>
 
-    <!-- Themes Section -->
-    <section id="themes" class="section themes-section">
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 5: READ — WEBNOVEL LINKS           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="read" class="section read-section" aria-label="Read stories">
         <div class="container">
-            <h2 class="section-title">Themes I Frequently Explore</h2>
-            
-            <div class="themes-grid">
-                <div class="theme-card">Human psychology</div>
-                <div class="theme-card">Family emotions</div>
-                <div class="theme-card">Shadows, fear, trauma</div>
-                <div class="theme-card">The line between good and evil</div>
-                <div class="theme-card">Supernatural elements</div>
-                <div class="theme-card">Life struggles and redemption</div>
-                <div class="theme-card">The hero inside an ordinary person</div>
+            <div class="section-header" data-reveal="up">
+                <div class="section-eyebrow">Available Now</div>
+                <h2 class="section-heading centered">Begin Your Journey</h2>
+                <p class="section-subtext">These stories live on WebNovel. Free to read. Impossible to forget.</p>
+            </div>
+
+            <div class="read-cards" role="list">
+                <div class="read-card" role="listitem" data-reveal="up" style="--delay: 0s">
+                    <div class="read-card-top">
+                        <span class="read-card-genre">Superhero Fantasy</span>
+                        <span class="read-card-num" aria-hidden="true">01</span>
+                    </div>
+                    <h3 class="read-card-title">Nature-Man</h3>
+                    <p class="read-card-desc">A boy accidentally drinks a genetic serum — gaining nature's voice and a villain's wrath.</p>
+                    <a href="http://wbnv.in/a/28jXqYL" target="_blank" rel="noopener noreferrer" class="read-card-btn" aria-label="Read Nature-Man on WebNovel">
+                        Read on WebNovel <span aria-hidden="true">→</span>
+                    </a>
+                </div>
+
+                <div class="read-card featured-card" role="listitem" data-reveal="up" style="--delay: 0.15s">
+                    <div class="featured-badge" aria-label="Featured story">Featured</div>
+                    <div class="read-card-top">
+                        <span class="read-card-genre">Fan Fiction · Fanfic Festa</span>
+                        <span class="read-card-num" aria-hidden="true">02</span>
+                    </div>
+                    <h3 class="read-card-title">One Piece:<br>Pirate Island Arc</h3>
+                    <p class="read-card-desc">Luffy vs the world. Garp in chains. A war that was never meant to happen — and can't be stopped.</p>
+                    <a href="http://wbnv.in/a/0djYVG4" target="_blank" rel="noopener noreferrer" class="read-card-btn glow-btn" aria-label="Read One Piece Pirate Island Arc on WebNovel">
+                        Read on WebNovel <span aria-hidden="true">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feedback form -->
+            <div class="feedback-block" data-reveal="up">
+                <h3 class="feedback-title">Leave Your Mark</h3>
+                <p class="feedback-sub">Read something? Tell me what it made you feel.</p>
+                <form class="cinematic-form" id="feedbackForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="feedbackName" name="name" class="form-input" placeholder=" " autocomplete="name">
+                            <label for="feedbackName" class="form-label">Your Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="feedbackEmail" name="email" class="form-input" placeholder=" " required autocomplete="email">
+                            <label for="feedbackEmail" class="form-label">Your Email *</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="feedbackMessage" name="message" class="form-input form-textarea" placeholder=" " rows="4" required></textarea>
+                        <label for="feedbackMessage" class="form-label">Your Thoughts *</label>
+                    </div>
+                    <button type="submit" class="form-submit" id="feedbackSubmit">
+                        <span class="submit-text">Send Feedback</span>
+                        <span class="submit-arrow" aria-hidden="true">→</span>
+                    </button>
+                    <div class="form-status" id="feedbackStatus" role="alert" aria-live="polite"></div>
+                </form>
             </div>
         </div>
     </section>
 
-    <!-- Writing Journey Section -->
-    <section id="journey" class="section journey-section">
-        <div class="container">
-            <h2 class="section-title">Writing Journey / Philosophy</h2>
-            
-            <div class="journey-content">
-                <div class="philosophy-quote">
-                    <p class="quote-text">"Stories are born from silence."</p>
-                </div>
-                
-                <div class="philosophy-text">
-                    <p>I write because it makes me free.</p>
-                    <p>I write because worlds live in my imagination.</p>
-                    <p>I write because memories, pain, dreams, and shadows become powerful on paper.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 6: CONTACT — CLOSING SCENE         -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="contact" class="section contact-section" aria-label="Contact Kal Krish">
+        <div class="contact-cinematic-bg" aria-hidden="true"></div>
+        <div class="container contact-container">
 
-    <!-- Read My Stories Section -->
-    <section id="subscribe" class="section subscribe-section">
-        <div class="container">
-            <h2 class="section-title">Read My Stories</h2>
-            <div class="subscribe-card">
-                <div class="webnovel-links">
-                    <h3>📖 Read My Stories on WebNovel</h3>
-                    <p class="webnovel-intro">My stories are available on WebNovel. Check them out below:</p>
-                    
-                    <div class="webnovel-story">
-                        <h4>🌿 Nature-Man</h4>
-                        <a href="http://wbnv.in/a/28jXqYL" target="_blank" class="webnovel-link">Read on WebNovel →</a>
-                    </div>
-                    
-                    <div class="webnovel-story">
-                        <h4>🏴‍☠️ One Piece: Pirate Island Arc</h4>
-                        <p class="story-description">In one world, Monkey D. Luffy sails forward—from Egghead to Elbaph—laughing as the future calls.</p>
-                        <p class="story-description">In another… he stops.</p>
-                        <p class="story-description">A parallel sea reveals a nightmare the original timeline never showed: Monkey D. Garp, Hero of the Marines, captured by Blackbeard and sentenced to execution on Pirate Island.</p>
-                        <p class="story-description">There is no prophecy. No chosen path. Only blood.</p>
-                        <p class="story-description">Defying fate itself, Luffy turns his ship toward the most dangerous island in the world—where emperors rule, legends fall, and mercy does not exist. As the drums of war begin to echo, Sengoku, bound by regret and brotherhood, joins the impossible rescue.</p>
-                        <p class="story-description">Amid clashing wills and raging battles, the truth behind Blackbeard's past slowly surfaces—his fear, his hunger, and the wound that shaped the monster the world knows.</p>
-                        <p class="story-description">As fists collide and tears fall, a question burns across the sea:</p>
-                        <p class="story-description"><strong>When family is chained… how far will a pirate king go?</strong></p>
-                        <p class="festival-note">🎉 Participating in Fanfic Festa</p>
-                        <a href="http://wbnv.in/a/0djYVG4" target="_blank" class="webnovel-link">Read on WebNovel →</a>
-                    </div>
-                </div>
-                
-                <div class="feedback-section">
-                    <h3>💬 Feedback for My Stories</h3>
-                    <p class="feedback-intro">I'd love to hear your thoughts on my stories! Share your feedback below:</p>
-                    <form class="feedback-form" id="feedback-form">
-                        <input type="text" name="name" placeholder="Your Name" class="feedback-input">
-                        <input type="email" name="email" placeholder="Your Email" required class="feedback-input">
-                        <textarea name="message" placeholder="Your feedback..." rows="5" required class="feedback-textarea"></textarea>
-                        <button type="submit" class="btn btn-primary">Send Feedback</button>
+            <div class="contact-top" data-reveal="up">
+                <div class="section-eyebrow">Connect</div>
+                <h2 class="contact-headline">If you're looking for <em>ordinary</em>,<br>this isn't it.</h2>
+                <p class="contact-subtext">Collaborations. Projects. Publishing inquiries.<br>Say something worth reading.</p>
+            </div>
+
+            <div class="contact-layout">
+                <!-- Form -->
+                <div class="contact-form-wrap" data-reveal="left">
+                    <form class="cinematic-form" id="contactForm" novalidate>
+                        <div class="form-group">
+                            <input type="text" id="contactName" name="name" class="form-input" placeholder=" " autocomplete="name">
+                            <label for="contactName" class="form-label">Your Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="contactEmail" name="email" class="form-input" placeholder=" " required autocomplete="email">
+                            <label for="contactEmail" class="form-label">Your Email *</label>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="contactMessage" name="message" class="form-input form-textarea" placeholder=" " rows="5" required></textarea>
+                            <label for="contactMessage" class="form-label">Your Message *</label>
+                        </div>
+                        <button type="submit" class="form-submit" id="contactSubmit">
+                            <span class="submit-text">Send Message</span>
+                            <span class="submit-arrow" aria-hidden="true">→</span>
+                        </button>
+                        <div class="form-status" id="contactStatus" role="alert" aria-live="polite"></div>
                     </form>
                 </div>
+
+                <!-- Social links -->
+                <div class="contact-links" data-reveal="right">
+                    <a href="mailto:kalkrish153@gmail.com" class="contact-link-item" aria-label="Email Kal Krish">
+                        <span class="cli-icon" aria-hidden="true">✉</span>
+                        <div class="cli-text">
+                            <span class="cli-label">Email</span>
+                            <span class="cli-value">kalkrish153@gmail.com</span>
+                        </div>
+                        <span class="cli-arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a href="https://www.instagram.com/writer_kalkirish/" target="_blank" rel="noopener noreferrer" class="contact-link-item" aria-label="Kal Krish on Instagram">
+                        <span class="cli-icon" aria-hidden="true">◈</span>
+                        <div class="cli-text">
+                            <span class="cli-label">Instagram</span>
+                            <span class="cli-value">@writer_kalkirish</span>
+                        </div>
+                        <span class="cli-arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a href="https://x.com/kalkrish31032" target="_blank" rel="noopener noreferrer" class="contact-link-item" aria-label="Kal Krish on X (Twitter)">
+                        <span class="cli-icon" aria-hidden="true">✕</span>
+                        <div class="cli-text">
+                            <span class="cli-label">X / Twitter</span>
+                            <span class="cli-value">@kalkrish31032</span>
+                        </div>
+                        <span class="cli-arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a href="https://www.youtube.com/channel/UCl1R2fes58rmLSKeJVpoOCA" target="_blank" rel="noopener noreferrer" class="contact-link-item" aria-label="Kal Krish on YouTube">
+                        <span class="cli-icon" aria-hidden="true">▶</span>
+                        <div class="cli-text">
+                            <span class="cli-label">YouTube</span>
+                            <span class="cli-value">Kal Krish-Hi</span>
+                        </div>
+                        <span class="cli-arrow" aria-hidden="true">→</span>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="section contact-section">
-        <div class="container">
-            <h2 class="section-title">Contact</h2>
-            
-            <div class="contact-content">
-                <p class="contact-intro">For collaborations, writing projects, or publishing inquiries:</p>
-                
-                <!-- Contact Form -->
-                <form class="contact-form" id="contact-form">
-                    <input type="text" name="name" placeholder="Your Name" class="contact-input">
-                    <input type="email" name="email" placeholder="Your Email" required class="contact-input">
-                    <textarea name="message" placeholder="Your Message" rows="5" required class="contact-textarea"></textarea>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-                
-                <div class="contact-info">
-                    <a href="mailto:kalkrish153@gmail.com" class="contact-item">
-                        <span class="contact-icon">📧</span>
-                        <span>kalkrish153@gmail.com</span>
-                    </a>
-                    <a href="https://www.instagram.com/writer_kalkirish/" target="_blank" class="contact-item">
-                        <span class="contact-icon">📷</span>
-                        <span>Instagram: writer_kalkirish</span>
-                    </a>
-                    <a href="https://x.com/kalkrish31032" target="_blank" class="contact-item">
-                        <span class="contact-icon">🐦</span>
-                        <span>Twitter/X: kal krish</span>
-                    </a>
-                    <a href="https://www.youtube.com/channel/UCl1R2fes58rmLSKeJVpoOCA" target="_blank" class="contact-item">
-                        <span class="contact-icon">🎬</span>
-                        <span>YouTube: kal krish-Hi</span>
-                    </a>
-                </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- FOOTER                                      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <span class="logo-k" aria-hidden="true">K</span>
+                <span>Kal Krish</span>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <span class="logo-k">K</span>
-                        <span class="logo-text">Kal Krish</span>
-                    </div>
-                    <p class="footer-tagline">"Where imagination meets darkness."</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#home">Home</a>
-                    <a href="#about">About</a>
-                    <a href="#books">Books</a>
-                    <a href="#contact">Contact</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Kal Krish. All rights reserved.</p>
-            </div>
+            <p class="footer-line">"Where imagination meets darkness."</p>
+            <nav class="footer-nav" aria-label="Footer navigation">
+                <a href="#home">Home</a>
+                <a href="#identity">Identity</a>
+                <a href="#works">Works</a>
+                <a href="#mind">Mind</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <p class="footer-copy">© 2025 Kal Krish (Narala Bhanu Prakash). All rights reserved.</p>
         </div>
     </footer>
 
